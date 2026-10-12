@@ -1,0 +1,43 @@
+---
+title: 快速开始
+description: 从注册账户到发出第一次代理请求。
+---
+
+<Steps>
+  <Step title="注册并验证账户">
+    在 [ipcrazy.com](https://ipcrazy.com/zh/dashboard) 用邮箱注册，并打开验证邮件中的链接。创建 API 密钥等操作需要先完成邮箱验证。
+  </Step>
+  <Step title="钱包充值">
+    在控制台打开**钱包与流水**，选择金额和支付方式。充值表单会列出当前可用的支付方式。支付网关确认到账后，余额以美元入账。详见[钱包与订单](/cn/guides/wallet-and-orders)。
+  </Step>
+  <Step title="购买产品">
+    在侧栏**选购产品**下选择：
+
+    - **动态住宅**：选择流量包。
+    - **静态住宅**或**静态原生**：选择地区、每个地区的数量和租期。
+
+    订单从钱包余额支付。静态 IP 按地区分别采购与交付，未能交付的数量对应金额自动退回钱包。
+  </Step>
+  <Step title="获取连接信息">
+    - **动态住宅**：打开**我的产品 → 动态住宅**，选择子账号、地区、IP 模式（轮换或粘性）和协议，生成连接信息。详见[动态连接](/cn/guides/dynamic-connections)。
+    - **静态 IP**：打开**我的产品 → 静态住宅**或**我的产品 → 静态原生**，在对应 IP 上点击**连接信息**。详见[静态 IP](/cn/guides/static-ips)。
+  </Step>
+  <Step title="发送测试请求">
+    在运行程序的机器上把连接信息设为环境变量，然后带超时发送一次请求：
+
+    ```bash
+    curl --proxy "http://${PROXY_HOST}:${PROXY_PORT}" \
+      --proxy-user "${PROXY_USERNAME}:${PROXY_PASSWORD}" \
+      --max-time 30 --fail --silent --show-error \
+      "https://api.ipify.org"
+    ```
+
+    返回结果是测试服务看到的出口 IP。更多语言见[代码示例](/cn/guides/code-examples)。
+  </Step>
+</Steps>
+
+<Warning>
+  不要把代理密码写进源代码、截图、埋点或客服消息。控制台只在你点击时显示连接信息，不会保存在浏览器中。
+</Warning>
+
+本页命令使用 Bash、zsh 等 POSIX shell，不是 PowerShell 语法。

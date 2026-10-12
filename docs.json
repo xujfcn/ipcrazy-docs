@@ -1,0 +1,163 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "ipcrazy Docs",
+  "description": "Dynamic residential, static residential and static native proxies: setup, connection details, billing and the ipcrazy API.",
+  "colors": {
+    "primary": "#2F6FF0",
+    "light": "#6FA0FF",
+    "dark": "#2F6FF0"
+  },
+  "background": {
+    "color": {
+      "light": "#FFFFFF",
+      "dark": "#091B36"
+    }
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg",
+    "href": "https://ipcrazy.com"
+  },
+  "favicon": "/favicon.svg",
+  "api": {
+    "playground": {
+      "display": "interactive"
+    },
+    "examples": {
+      "languages": ["curl", "python", "javascript"]
+    }
+  },
+  "navigation": {
+    "languages": [
+      {
+        "language": "en",
+        "navbar": {
+          "links": [
+            { "label": "Pricing", "href": "https://ipcrazy.com/pricing" }
+          ],
+          "primary": {
+            "type": "button",
+            "label": "Open console",
+            "href": "https://ipcrazy.com/dashboard"
+          }
+        },
+        "footer": {
+          "links": [
+            {
+              "header": "ipcrazy",
+              "items": [
+                { "label": "Website", "href": "https://ipcrazy.com" },
+                { "label": "Pricing", "href": "https://ipcrazy.com/pricing" },
+                {
+                  "label": "Terms of Service",
+                  "href": "https://ipcrazy.com/terms-of-service"
+                },
+                {
+                  "label": "Privacy Policy",
+                  "href": "https://ipcrazy.com/privacy-policy"
+                }
+              ]
+            }
+          ]
+        },
+        "groups": [
+          {
+            "group": "Get started",
+            "pages": ["index", "quickstart"]
+          },
+          {
+            "group": "Products",
+            "pages": [
+              "products/dynamic-residential",
+              "products/static-residential",
+              "products/static-native"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/wallet-and-orders",
+              "guides/dynamic-connections",
+              "guides/static-ips",
+              "guides/code-examples"
+            ]
+          },
+          {
+            "group": "API reference",
+            "openapi": "api-reference/openapi.json",
+            "pages": ["api-reference/overview", "api-reference/access"]
+          },
+          {
+            "group": "Policies",
+            "pages": ["policies/after-sales", "policies/acceptable-use"]
+          }
+        ]
+      },
+      {
+        "language": "cn",
+        "navbar": {
+          "links": [
+            { "label": "价格", "href": "https://ipcrazy.com/zh/pricing" }
+          ],
+          "primary": {
+            "type": "button",
+            "label": "打开控制台",
+            "href": "https://ipcrazy.com/zh/dashboard"
+          }
+        },
+        "footer": {
+          "links": [
+            {
+              "header": "ipcrazy",
+              "items": [
+                { "label": "官网", "href": "https://ipcrazy.com/zh" },
+                { "label": "价格", "href": "https://ipcrazy.com/zh/pricing" },
+                {
+                  "label": "服务条款",
+                  "href": "https://ipcrazy.com/zh/terms-of-service"
+                },
+                {
+                  "label": "隐私政策",
+                  "href": "https://ipcrazy.com/zh/privacy-policy"
+                }
+              ]
+            }
+          ]
+        },
+        "groups": [
+          {
+            "group": "开始使用",
+            "pages": ["cn/index", "cn/quickstart"]
+          },
+          {
+            "group": "产品",
+            "pages": [
+              "cn/products/dynamic-residential",
+              "cn/products/static-residential",
+              "cn/products/static-native"
+            ]
+          },
+          {
+            "group": "使用指南",
+            "pages": [
+              "cn/guides/wallet-and-orders",
+              "cn/guides/dynamic-connections",
+              "cn/guides/static-ips",
+              "cn/guides/code-examples"
+            ]
+          },
+          {
+            "group": "API 参考",
+            "openapi": "api-reference/openapi.json",
+            "pages": ["cn/api-reference/overview", "cn/api-reference/access"]
+          },
+          {
+            "group": "政策",
+            "pages": ["cn/policies/after-sales", "cn/policies/acceptable-use"]
+          }
+        ]
+      }
+    ]
+  }
+}

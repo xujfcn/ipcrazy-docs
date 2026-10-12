@@ -1,0 +1,62 @@
+---
+title: API 概览
+description: 使用 ipcrazy API 密钥认证，并处理错误。
+---
+
+ipcrazy API 使用在控制台创建的 API 密钥。目前 API 用于让你的程序**验证密钥是否有效**。购买、钱包和代理管理请在控制台完成。
+
+<Warning>
+  API 密钥不是代理凭证。它不会授予代理访问权限，代理用户名和密码也不能当作 API 密钥使用。
+</Warning>
+
+## 基础 URL
+
+```text
+https://ipcrazy.com
+```
+
+所有接口都在 `/api/v1` 下，返回 JSON。
+
+## API 密钥
+
+1. 验证邮箱地址。未验证的账户无法创建密钥。
+2. 在控制台打开 **API Keys**，填写标签并创建密钥。
+3. 立即复制密钥。密钥以 `ipc_live_` 开头，**只显示一次**。
+
+最多可同时持有 10 个有效密钥。密钥不再使用或可能泄露时，请立即在控制台撤销；撤销后立即失效。
+
+以 Bearer 令牌方式发送密钥：
+
+```bash
+curl https://ipcrazy.com/api/v1/access \
+  -H "Authorization: Bearer ${IPCRAZY_API_KEY}"
+```
+
+请把密钥保存在服务器端，不要嵌入浏览器代码、移动应用或公开仓库。
+
+## 响应与错误
+
+成功响应的结果放在 `data` 中。每个响应都包含 `trace_id`。
+
+错误统一使用以下格式：
+
+```json
+{
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Valid API key required",
+    "retryable": false
+  },
+  "trace_id": "9f2c7a8e-0000-4000-8000-000000000000"
+}
+```
+
+- 根据 `error.code` 判断错误，不要依赖 `message`。
+- 只有 `retryable` 为 `true` 时才使用退避重试。`429` 响应可能带有 `Retry-After` 头。
+- 联系客服时请提供 `trace_id`。
+
+## 接口
+
+<Card title="验证 API 密钥" icon="key" href="/cn/api-reference/access" horizontal>
+  `GET /api/v1/access`
+</Card>

@@ -1,0 +1,132 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "ipcrazy API",
+    "version": "1.0.0",
+    "description": "Customer API authenticated with an ipcrazy API key. API keys are separate from proxy credentials and never grant proxy access."
+  },
+  "servers": [{ "url": "https://ipcrazy.com" }],
+  "security": [{ "bearerKey": [] }],
+  "components": {
+    "securitySchemes": {
+      "bearerKey": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "An ipcrazy API key in the form `ipc_live_…`, created under Console → API Keys. Never send a proxy password here."
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "required": ["error", "trace_id"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": ["code", "message", "retryable"],
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "Stable machine-readable error code, for example `UNAUTHORIZED`.",
+                "example": "UNAUTHORIZED"
+              },
+              "message": {
+                "type": "string",
+                "description": "Human-readable description. Do not parse it.",
+                "example": "Valid API key required"
+              },
+              "retryable": {
+                "type": "boolean",
+                "description": "Whether repeating the same request later may succeed."
+              }
+            }
+          },
+          "trace_id": {
+            "type": "string",
+            "description": "Request identifier. Include it when you contact support."
+          }
+        }
+      },
+      "Access": {
+        "type": "object",
+        "required": ["data", "trace_id"],
+        "properties": {
+          "data": {
+            "type": "object",
+            "required": [
+              "customer_id",
+              "credential_id",
+              "capabilities",
+              "proxy_enabled"
+            ],
+            "properties": {
+              "customer_id": {
+                "type": "string",
+                "description": "Identifier of the account that owns the key."
+              },
+              "credential_id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Identifier of the API key that was used."
+              },
+              "capabilities": {
+                "type": "array",
+                "items": { "type": "string", "enum": ["access:read"] },
+                "description": "What the key may do. Currently only `access:read`."
+              },
+              "proxy_enabled": {
+                "type": "boolean",
+                "const": false,
+                "description": "Always `false`: an API key is never a proxy credential."
+              }
+            }
+          },
+          "trace_id": { "type": "string" }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/v1/access": {
+      "get": {
+        "operationId": "verifyApiAccess",
+        "summary": "Verify an API key",
+        "description": "Checks that the API key is valid and returns the account and key it belongs to. It does not grant or reveal proxy access.",
+        "responses": {
+          "200": {
+            "description": "The key is valid.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Access" },
+                "example": {
+                  "data": {
+                    "customer_id": "example-customer-id",
+                    "credential_id": "00000000-0000-4000-8000-000000000000",
+                    "capabilities": ["access:read"],
+                    "proxy_enabled": false
+                  },
+                  "trace_id": "9f2c7a8e-0000-4000-8000-000000000000"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The key is missing, malformed or revoked, or its account is suspended or not yet verified.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" },
+                "example": {
+                  "error": {
+                    "code": "UNAUTHORIZED",
+                    "message": "Valid API key required",
+                    "retryable": false
+                  },
+                  "trace_id": "9f2c7a8e-0000-4000-8000-000000000000"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

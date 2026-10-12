@@ -1,0 +1,10 @@
+---
+title: Verify an API key
+openapi: GET /api/v1/access
+---
+
+Use this endpoint to check that your application is configured with a valid key, for example at startup or in a health check. It returns the account and key the request was authenticated with.
+
+`proxy_enabled` is always `false`: API keys never grant proxy access. Get proxy connection details in the console.
+
+A `401` response means the key is missing, malformed or revoked, or its account is suspended or not yet verified. Do not retry a `401` with the same key.

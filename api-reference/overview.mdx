@@ -1,0 +1,62 @@
+---
+title: API overview
+description: Authenticate with an ipcrazy API key and handle errors.
+---
+
+The ipcrazy API uses API keys created in the console. Today the API lets your application **verify that its key is valid**. Purchases, wallet and proxy management are done in the console.
+
+<Warning>
+  An API key is not a proxy credential. It never grants proxy access, and proxy usernames and passwords never work as API keys.
+</Warning>
+
+## Base URL
+
+```text
+https://ipcrazy.com
+```
+
+All endpoints are under `/api/v1` and return JSON.
+
+## API keys
+
+1. Verify your email address. Unverified accounts cannot create keys.
+2. Open **API Keys** in the console, enter a label and create the key.
+3. Copy the key immediately. It starts with `ipc_live_` and is **shown only once**.
+
+You can hold up to 10 active keys. Revoke a key in the console as soon as it is no longer needed or may have leaked; revoked keys stop working at once.
+
+Send the key as a bearer token:
+
+```bash
+curl https://ipcrazy.com/api/v1/access \
+  -H "Authorization: Bearer ${IPCRAZY_API_KEY}"
+```
+
+Keep keys on your server. Do not embed them in browser code, mobile apps or public repositories.
+
+## Responses and errors
+
+Successful responses wrap the result in `data`. Every response includes a `trace_id`.
+
+Errors use one shape:
+
+```json
+{
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Valid API key required",
+    "retryable": false
+  },
+  "trace_id": "9f2c7a8e-0000-4000-8000-000000000000"
+}
+```
+
+- Branch on `error.code`, not on `message`.
+- Retry only when `retryable` is `true`, with backoff. A `429` response may include a `Retry-After` header.
+- Quote the `trace_id` when you contact support.
+
+## Endpoints
+
+<Card title="Verify an API key" icon="key" href="/api-reference/access" horizontal>
+  `GET /api/v1/access`
+</Card>

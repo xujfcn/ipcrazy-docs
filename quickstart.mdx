@@ -1,0 +1,43 @@
+---
+title: Quickstart
+description: From a new account to your first proxy request.
+---
+
+<Steps>
+  <Step title="Create and verify your account">
+    Sign up at [ipcrazy.com](https://ipcrazy.com/dashboard) with your email address, then open the verification link we send you. Some actions, such as creating API keys, require a verified email.
+  </Step>
+  <Step title="Top up your wallet">
+    Open **Wallet** in the console and choose an amount and a payment method. The methods currently offered are shown on the top-up form. Your balance is credited in USD once the payment gateway confirms the payment. See [Wallet and orders](/guides/wallet-and-orders).
+  </Step>
+  <Step title="Buy a product">
+    Open **Buy products** and pick a tab:
+
+    - **Dynamic residential**: choose a traffic package.
+    - **Static ISP** or **Native static**: choose regions, a quantity per region and a term.
+
+    The order is paid from your wallet. Static IPs are purchased and delivered per region; any quantity that cannot be delivered is refunded to your wallet automatically.
+  </Step>
+  <Step title="Get connection details">
+    - **Dynamic residential**: open **My products → Dynamic residential**, choose a sub-account, region, IP mode (rotating or sticky) and protocol, then generate connection details. See [Dynamic connections](/guides/dynamic-connections).
+    - **Static IPs**: open **My products → Static ISP** or **My products → Native static** and select **Credentials** on the IP you want. See [Static IPs](/guides/static-ips).
+  </Step>
+  <Step title="Send a test request">
+    Put the details in environment variables on the machine that runs your software, then send one request with a timeout:
+
+    ```bash
+    curl --proxy "http://${PROXY_HOST}:${PROXY_PORT}" \
+      --proxy-user "${PROXY_USERNAME}:${PROXY_PASSWORD}" \
+      --max-time 30 --fail --silent --show-error \
+      "https://api.ipify.org"
+    ```
+
+    The response is the exit IP seen by the test service. More languages are in [Code examples](/guides/code-examples).
+  </Step>
+</Steps>
+
+<Warning>
+  Keep proxy passwords out of source code, screenshots, analytics and support messages. The console only shows connection details when you ask for them; they are not stored in your browser.
+</Warning>
+
+The commands on this page use a POSIX shell such as Bash or zsh, not PowerShell.

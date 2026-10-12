@@ -1,0 +1,39 @@
+---
+title: Static IPs
+description: Connection details, renewal and auto-renewal for static residential and static native IPs.
+---
+
+Delivered static residential and static native IPs are listed under **My products → Static ISP** and **My products → Native static**. Filter each list by status; each row shows the region, expiry and renewal settings.
+
+## Connection details
+
+Select **Credentials** on an IP to see its host, port, protocol, username and password, in two copyable formats:
+
+```text
+http://USERNAME:PASSWORD@HOST:PORT
+HOST:PORT:USERNAME:PASSWORD
+```
+
+Connection details are fetched live only when you ask for them. They are not stored by ipcrazy or in your browser, and reloading the page hides them. Your software connects to the proxy address directly.
+
+## Renew
+
+Select one or more IPs, choose **Renew selected**, pick a term and confirm. The renewal is paid from your wallet.
+
+- The new term starts from the current expiry, so no time is lost by renewing early.
+- The IP and its connection details stay the same.
+- One renewal order can only contain IPs of the same product type.
+
+## Auto-renew
+
+Open **Renewal** on an IP and turn on **Renew automatically**, then choose the renewal period. The console shows the price of each renewal; choose **Confirm price and save**.
+
+- The IP is renewed from your wallet within the 24 hours before it expires.
+- Each IP is renewed as its own order, for **no more than the price you confirmed**.
+- If the unit price rises, nothing is charged. The list shows that the renewal price changed until you confirm the new price under **Renewal**.
+- Nothing is renewed if your balance is too low, so keep expiry reminders on under **Settings → Notifications**.
+- You can turn auto-renew off for any IP at any time before expiry.
+
+<Note>
+  If an auto-renewal did not succeed, the IP shows "Last auto-renew failed". Renew manually before expiry to keep the IP.
+</Note>

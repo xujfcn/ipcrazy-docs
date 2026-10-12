@@ -1,0 +1,184 @@
+---
+title: Code examples
+description: Send a request through an ipcrazy proxy from cURL, Python, Node.js, Go and Java.
+---
+
+The console generates these examples with your real connection details filled in. The versions below read them from environment variables instead, so no password is written into your code:
+
+```bash
+export PROXY_HOST="proxy-host-from-console"
+export PROXY_PORT="port-from-console"
+export PROXY_USERNAME="username-from-console"
+export PROXY_PASSWORD="password-from-console"
+```
+
+Each example requests `https://api.ipify.org`, which returns the exit IP, and uses a 30-second timeout. Run it once and compare the IP with the resource or region you expect. With rotating dynamic sessions, later requests may use a different exit.
+
+## HTTP proxy
+
+Works with dynamic residential (HTTP port) and with static IPs whose protocol is HTTP. HTTPS destinations are tunnelled through the HTTP proxy.
+
+<CodeGroup>
+
+```bash cURL
+curl --proxy "http://${PROXY_HOST}:${PROXY_PORT}" \
+  --proxy-user "${PROXY_USERNAME}:${PROXY_PASSWORD}" \
+  --max-time 30 --fail --silent --show-error \
+  "https://api.ipify.org"
+```
+
+```python Python
+# pip install requests
+import os
+from urllib.parse import quote
+
+import requests
+
+user = quote(os.environ["PROXY_USERNAME"], safe="")
+password = quote(os.environ["PROXY_PASSWORD"], safe="")
+proxy = f"http://{user}:{password}@{os.environ['PROXY_HOST']}:{os.environ['PROXY_PORT']}"
+
+r = requests.get("https://api.ipify.org", proxies={"http": proxy, "https": proxy}, timeout=30)
+r.raise_for_status()
+print(r.text)
+```
+
+```javascript Node.js
+// npm install https-proxy-agent   (ES module: save as test.mjs)
+import https from 'node:https';
+import { HttpsProxyAgent } from 'https-proxy-agent';
+
+const proxy = new URL(`http://${process.env.PROXY_HOST}:${process.env.PROXY_PORT}`);
+proxy.username = process.env.PROXY_USERNAME;
+proxy.password = process.env.PROXY_PASSWORD;
+
+const agent = new HttpsProxyAgent(proxy);
+https
+  .get('https://api.ipify.org', { agent, timeout: 30000 }, (res) => res.pipe(process.stdout))
+  .on('timeout', function () { this.destroy(new Error('timeout')); });
+```
+
+```go Go
+package main
+
+import (
+	"fmt"
+	"io"
+	"net/http"
+	"net/url"
+	"os"
+	"time"
+)
+
+func main() {
+	proxy := &url.URL{
+		Scheme: "http",
+		User:   url.UserPassword(os.Getenv("PROXY_USERNAME"), os.Getenv("PROXY_PASSWORD")),
+		Host:   os.Getenv("PROXY_HOST") + ":" + os.Getenv("PROXY_PORT"),
+	}
+	client := &http.Client{
+		Timeout:   30 * time.Second,
+		Transport: &http.Transport{Proxy: http.ProxyURL(proxy)},
+	}
+	resp, err := client.Get("https://api.ipify.org")
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	fmt.Println(string(body))
+}
+```
+
+```java Java
+import java.io.InputStream;
+import java.net.*;
+
+public class ProxyTest {
+  public static void main(String[] args) throws Exception {
+    // Allows Basic proxy authentication for HTTPS tunnels.
+    System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
+    String user = System.getenv("PROXY_USERNAME");
+    String pass = System.getenv("PROXY_PASSWORD");
+    Authenticator.setDefault(new Authenticator() {
+      protected PasswordAuthentication getPasswordAuthentication() {
+        return new PasswordAuthentication(user, pass.toCharArray());
+      }
+    });
+    Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(
+        System.getenv("PROXY_HOST"), Integer.parseInt(System.getenv("PROXY_PORT"))));
+    HttpURLConnection conn = (HttpURLConnection) URI.create("https://api.ipify.org")
+        .toURL().openConnection(proxy);
+    conn.setConnectTimeout(30000);
+    conn.setReadTimeout(30000);
+    try (InputStream in = conn.getInputStream()) {
+      System.out.println(new String(in.readAllBytes()));
+    }
+  }
+}
+```
+
+</CodeGroup>
+
+## SOCKS5 proxy
+
+For dynamic residential, use the **SOCKS5 port** from the console. `socks5h://` resolves destination hostnames at the proxy.
+
+<CodeGroup>
+
+```bash cURL
+curl --proxy "socks5h://${PROXY_HOST}:${PROXY_PORT}" \
+  --proxy-user "${PROXY_USERNAME}:${PROXY_PASSWORD}" \
+  --max-time 30 --fail --silent --show-error \
+  "https://api.ipify.org"
+```
+
+```python Python
+# pip install "requests[socks]"
+import os
+from urllib.parse import quote
+
+import requests
+
+user = quote(os.environ["PROXY_USERNAME"], safe="")
+password = quote(os.environ["PROXY_PASSWORD"], safe="")
+proxy = f"socks5h://{user}:{password}@{os.environ['PROXY_HOST']}:{os.environ['PROXY_PORT']}"
+
+r = requests.get("https://api.ipify.org", proxies={"http": proxy, "https": proxy}, timeout=30)
+r.raise_for_status()
+print(r.text)
+```
+
+```javascript Node.js
+// npm install socks-proxy-agent   (ES module: save as test.mjs)
+import https from 'node:https';
+import { SocksProxyAgent } from 'socks-proxy-agent';
+
+const proxy = new URL(`socks5h://${process.env.PROXY_HOST}:${process.env.PROXY_PORT}`);
+proxy.username = process.env.PROXY_USERNAME;
+proxy.password = process.env.PROXY_PASSWORD;
+
+const agent = new SocksProxyAgent(proxy);
+https
+  .get('https://api.ipify.org', { agent, timeout: 30000 }, (res) => res.pipe(process.stdout))
+  .on('timeout', function () { this.destroy(new Error('timeout')); });
+```
+
+```go Go
+// Go's SOCKS5 dialer already sends hostnames to the proxy, so the
+// scheme is socks5 rather than socks5h.
+proxy := &url.URL{
+	Scheme: "socks5",
+	User:   url.UserPassword(os.Getenv("PROXY_USERNAME"), os.Getenv("PROXY_PASSWORD")),
+	Host:   os.Getenv("PROXY_HOST") + ":" + os.Getenv("PROXY_PORT"),
+}
+// The rest is the same as the HTTP example.
+```
+
+</CodeGroup>
+
+## Before you scale up
+
+- Keep a timeout on every request and handle HTTP status codes in your application.
+- Limit concurrency and add retries with backoff for transient errors.
+- Store credentials in a secret manager or server environment, never in a repository.

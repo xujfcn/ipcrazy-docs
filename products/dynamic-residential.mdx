@@ -1,0 +1,37 @@
+---
+title: Dynamic residential
+description: Rotating or sticky residential exits, billed by traffic.
+---
+
+Dynamic residential proxies route each request through a residential exit in the region you choose. Use rotating mode for independent requests, or a sticky session when a short workflow needs the same exit for a while.
+
+## At a glance
+
+| | |
+| --- | --- |
+| Billing | Traffic packages in GB, each valid for a fixed number of days (currently 30) |
+| Protocols | HTTP (also for HTTPS destinations) and SOCKS5 |
+| IP mode | Rotating, or sticky for 1–120 minutes |
+| Region | Any region, or a country, state and city where available |
+| Usage | Daily usage per sub-account, exportable as CSV |
+
+Current packages and USD prices are on the [pricing page](https://ipcrazy.com/pricing) and in the console under **Buy products → Dynamic residential**.
+
+## How traffic works
+
+- Buying a package grants its traffic to your dynamic sub-account. Your first purchase creates the sub-account automatically.
+- When you hold several packages, traffic is deducted from the one that expires first.
+- Only packages that are unexpired and not revoked count toward your available traffic.
+- A sub-account is paused when it has no traffic left or its packages have expired, and resumes when new traffic is granted.
+- Usage figures come from the network provider's verified data and can lag by a short time.
+
+<Note>
+  Sticky sessions keep the same exit for the window you choose but do not guarantee a permanent IP. If you need a fixed IP, use [static residential](/products/static-residential) or [static native](/products/static-native).
+</Note>
+
+## Limitations
+
+- Creating additional sub-accounts or moving traffic between sub-accounts is not self-service.
+- Proxy traffic goes directly from your software to the proxy entry, so ipcrazy has no per-request logs. Only daily usage is available.
+
+Next: [generate connection details](/guides/dynamic-connections).

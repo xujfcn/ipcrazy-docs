@@ -1,0 +1,184 @@
+---
+title: 代码示例
+description: 用 cURL、Python、Node.js、Go 和 Java 通过 ipcrazy 代理发送请求。
+---
+
+控制台生成的示例会直接填入你的真实连接信息。下面的版本改为从环境变量读取，避免把密码写进代码：
+
+```bash
+export PROXY_HOST="控制台中的主机"
+export PROXY_PORT="控制台中的端口"
+export PROXY_USERNAME="控制台中的用户名"
+export PROXY_PASSWORD="控制台中的密码"
+```
+
+每个示例都请求 `https://api.ipify.org`（返回出口 IP），并设置 30 秒超时。运行一次，把返回的 IP 与你预期的资源或地区对照。动态住宅使用轮换模式时，后续请求可能使用不同出口。
+
+## HTTP 代理
+
+适用于动态住宅（HTTP 端口）以及协议为 HTTP 的静态 IP。HTTPS 目标通过 HTTP 代理建立隧道访问。
+
+<CodeGroup>
+
+```bash cURL
+curl --proxy "http://${PROXY_HOST}:${PROXY_PORT}" \
+  --proxy-user "${PROXY_USERNAME}:${PROXY_PASSWORD}" \
+  --max-time 30 --fail --silent --show-error \
+  "https://api.ipify.org"
+```
+
+```python Python
+# pip install requests
+import os
+from urllib.parse import quote
+
+import requests
+
+user = quote(os.environ["PROXY_USERNAME"], safe="")
+password = quote(os.environ["PROXY_PASSWORD"], safe="")
+proxy = f"http://{user}:{password}@{os.environ['PROXY_HOST']}:{os.environ['PROXY_PORT']}"
+
+r = requests.get("https://api.ipify.org", proxies={"http": proxy, "https": proxy}, timeout=30)
+r.raise_for_status()
+print(r.text)
+```
+
+```javascript Node.js
+// npm install https-proxy-agent   (ES module: save as test.mjs)
+import https from 'node:https';
+import { HttpsProxyAgent } from 'https-proxy-agent';
+
+const proxy = new URL(`http://${process.env.PROXY_HOST}:${process.env.PROXY_PORT}`);
+proxy.username = process.env.PROXY_USERNAME;
+proxy.password = process.env.PROXY_PASSWORD;
+
+const agent = new HttpsProxyAgent(proxy);
+https
+  .get('https://api.ipify.org', { agent, timeout: 30000 }, (res) => res.pipe(process.stdout))
+  .on('timeout', function () { this.destroy(new Error('timeout')); });
+```
+
+```go Go
+package main
+
+import (
+	"fmt"
+	"io"
+	"net/http"
+	"net/url"
+	"os"
+	"time"
+)
+
+func main() {
+	proxy := &url.URL{
+		Scheme: "http",
+		User:   url.UserPassword(os.Getenv("PROXY_USERNAME"), os.Getenv("PROXY_PASSWORD")),
+		Host:   os.Getenv("PROXY_HOST") + ":" + os.Getenv("PROXY_PORT"),
+	}
+	client := &http.Client{
+		Timeout:   30 * time.Second,
+		Transport: &http.Transport{Proxy: http.ProxyURL(proxy)},
+	}
+	resp, err := client.Get("https://api.ipify.org")
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	fmt.Println(string(body))
+}
+```
+
+```java Java
+import java.io.InputStream;
+import java.net.*;
+
+public class ProxyTest {
+  public static void main(String[] args) throws Exception {
+    // Allows Basic proxy authentication for HTTPS tunnels.
+    System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
+    String user = System.getenv("PROXY_USERNAME");
+    String pass = System.getenv("PROXY_PASSWORD");
+    Authenticator.setDefault(new Authenticator() {
+      protected PasswordAuthentication getPasswordAuthentication() {
+        return new PasswordAuthentication(user, pass.toCharArray());
+      }
+    });
+    Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(
+        System.getenv("PROXY_HOST"), Integer.parseInt(System.getenv("PROXY_PORT"))));
+    HttpURLConnection conn = (HttpURLConnection) URI.create("https://api.ipify.org")
+        .toURL().openConnection(proxy);
+    conn.setConnectTimeout(30000);
+    conn.setReadTimeout(30000);
+    try (InputStream in = conn.getInputStream()) {
+      System.out.println(new String(in.readAllBytes()));
+    }
+  }
+}
+```
+
+</CodeGroup>
+
+## SOCKS5 代理
+
+动态住宅请使用控制台中的 **SOCKS5 端口**。`socks5h://` 会在代理端解析目标域名。
+
+<CodeGroup>
+
+```bash cURL
+curl --proxy "socks5h://${PROXY_HOST}:${PROXY_PORT}" \
+  --proxy-user "${PROXY_USERNAME}:${PROXY_PASSWORD}" \
+  --max-time 30 --fail --silent --show-error \
+  "https://api.ipify.org"
+```
+
+```python Python
+# pip install "requests[socks]"
+import os
+from urllib.parse import quote
+
+import requests
+
+user = quote(os.environ["PROXY_USERNAME"], safe="")
+password = quote(os.environ["PROXY_PASSWORD"], safe="")
+proxy = f"socks5h://{user}:{password}@{os.environ['PROXY_HOST']}:{os.environ['PROXY_PORT']}"
+
+r = requests.get("https://api.ipify.org", proxies={"http": proxy, "https": proxy}, timeout=30)
+r.raise_for_status()
+print(r.text)
+```
+
+```javascript Node.js
+// npm install socks-proxy-agent   (ES module: save as test.mjs)
+import https from 'node:https';
+import { SocksProxyAgent } from 'socks-proxy-agent';
+
+const proxy = new URL(`socks5h://${process.env.PROXY_HOST}:${process.env.PROXY_PORT}`);
+proxy.username = process.env.PROXY_USERNAME;
+proxy.password = process.env.PROXY_PASSWORD;
+
+const agent = new SocksProxyAgent(proxy);
+https
+  .get('https://api.ipify.org', { agent, timeout: 30000 }, (res) => res.pipe(process.stdout))
+  .on('timeout', function () { this.destroy(new Error('timeout')); });
+```
+
+```go Go
+// Go's SOCKS5 dialer already sends hostnames to the proxy, so the
+// scheme is socks5 rather than socks5h.
+proxy := &url.URL{
+	Scheme: "socks5",
+	User:   url.UserPassword(os.Getenv("PROXY_USERNAME"), os.Getenv("PROXY_PASSWORD")),
+	Host:   os.Getenv("PROXY_HOST") + ":" + os.Getenv("PROXY_PORT"),
+}
+// The rest is the same as the HTTP example.
+```
+
+</CodeGroup>
+
+## 扩大规模之前
+
+- 每个请求都设置超时，并在程序中处理 HTTP 状态码。
+- 限制并发，对临时错误使用退避重试。
+- 把凭证保存在密钥管理工具或服务器环境变量中，不要提交到代码仓库。

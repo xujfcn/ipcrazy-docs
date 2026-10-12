@@ -1,0 +1,49 @@
+---
+title: Dynamic connections
+description: Generate connection details for a dynamic residential sub-account.
+---
+
+Dynamic residential connection details are generated per request in the console. Your software then connects to the proxy entry directly.
+
+## Prerequisites
+
+The **My products → Dynamic residential** page shows your setup progress. You can generate connection details once all of these are true:
+
+- a dynamic sub-account has been assigned to you (your first traffic purchase creates it);
+- the sub-account has traffic available;
+- the sub-account is active with the network provider.
+
+## Generate connection details
+
+<Steps>
+  <Step title="Choose a sub-account">
+    Open **My products → Dynamic residential** and pick a sub-account under **Connection details**. Only active sub-accounts with traffic left are listed.
+  </Step>
+  <Step title="Choose a region">
+    Leave **Any region**, or choose a country. Where available you can narrow it down to a state or province and a city.
+  </Step>
+  <Step title="Choose the IP mode">
+    - **Rotating**: the exit can change between requests.
+    - **Sticky session**: keep the same exit for 1–120 minutes.
+  </Step>
+  <Step title="Choose a protocol">
+    **HTTP** or **SOCKS5**. The HTTP proxy also carries HTTPS destinations.
+  </Step>
+  <Step title="Generate and copy">
+    The console shows the host, HTTP port, SOCKS5 port, username and password, plus ready-to-run examples for cURL, Python, Node.js, Go and Java.
+  </Step>
+</Steps>
+
+Generated details apply to the settings you chose. Generate new details whenever you change the region, IP mode or protocol.
+
+<Warning>
+  Connection details stay on the page only until you hide them, reload or pick another sub-account. Copy them straight into your secret manager or server environment.
+</Warning>
+
+## SOCKS5 and DNS
+
+Use `socks5h://` so that destination hostnames are resolved at the proxy, as with the HTTP proxy. Plain `socks5://` resolves names on your own machine.
+
+## Usage
+
+**My products → Dynamic residential → Usage details** shows remaining traffic, package expiry dates and daily usage per sub-account for the last 7 or 30 days (dates in UTC+8). Export it as CSV. Proxy traffic does not pass through ipcrazy, so per-request logs are not available.
